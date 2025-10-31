@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api_container
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${HTTP_ADDR}:${HTTP_ADDR}
+    depends_on:
+      - mongo
+    networks:
+      - shared_network
+  mongo:
+    image: mongo:7
+    container_name: mongo_container
+    env_file:
+      - .env
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - shared_network
+
+volumes:
+  mongo_data:
+
+networks:
+  shared_network: {}
